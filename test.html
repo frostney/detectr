@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title>Detectr.js Test page</title>
+  <script type="text/javascript" src="detectr.js"></script>
+</head>
+<body>
+	
+  <script>
+  	(function(window, document) {
+  		var detectedElements = document.documentElement.className.split(' ');
+
+  		for (var i = 0, j = detectedElements.length; i < j; i++) {
+  			var elem = document.createElement('div');
+  			var content = document.createTextNode(detectedElements[i]);
+
+  			elem.appendChild(content);
+
+  			document.body.appendChild(elem);
+  		}
+  	})(window, document);
+  </script>
+</body>
+</html>
