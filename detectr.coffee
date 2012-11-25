@@ -2,6 +2,14 @@
   "use strict"
 
   ###
+    String helper functions
+  ###
+
+  # Use ECMAScript 6 String.prototype.contains if available
+  contains = (bigString, smallString) ->
+    if String::contains then bigString.contains(smallString) else !!~bigString.indexOf(smallString)
+
+  ###
     Default configuration for detectr
   ###
   defaultTests =
@@ -13,40 +21,40 @@
         run: -> runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7') or runTest('blackberry')
         result: 'mobile'
       macosx:
-        run: -> ~detectr.Browser.platform.name().indexOf('macosx')
+        run: -> contains detectr.Browser.platform.name(), 'macosx'
         result: 'macosx'
       linux:
-        run: -> ~detectr.Browser.platform.name().indexOf('linux')
+        run: -> contains detectr.Browser.platform.name(), 'linux'
         result: 'linux'
       windows:
-        run: -> ~detectr.Browser.platform.name().indexOf('windows')
+        run: -> contains detectr.Browser.platform.name(), 'windows'
         result: 'windows'
       android:
-        run: -> detectr.Browser.get().match(/Android/)
+        run: -> contains detectr.Browser.get(), 'android'
         result: 'android'
       ios:
         run: -> runTest('ipod') or runTest('iphone') or runTest('ipad')
         result: 'ios'
       ipod:
-        run: -> detectr.Browser.get().match(/iPod/)
+        run: -> contains detectr.Browser.get(), 'ipod'
         result: 'ipod'
       iphone:
-        run: -> detectr.Browser.get().match(/iPhone/)
+        run: -> contains detectr.Browser.get(), 'iphone'
         result: 'iphone'
       ipad:
-        run: -> detectr.Browser.get().match(/iPad/)
+        run: -> contains detectr.Browser.get(), 'ipad'
         result: 'ipad'
       bada:
-        run: -> detectr.Browser.get().match(/Bada/)
+        run: -> contains detectr.Browser.get(), 'bada'
         result: 'bada'
       webos:
-        run: -> detectr.Browser.get().match(/webOS/)
+        run: -> contains detectr.Browser.get(), 'webos'
         result: 'webos'
       wp7:
-        run: -> detectr.Browser.get().match(/Windows Phone OS/)
+        run: -> contains detectr.Browser.get(), 'windows phone os'
         result: 'wp7'
       blackberry:
-        run: -> detectr.Browser.get().match(/RIM/) or detectr.Browser.get().match(/BlackBerry/)
+        run: -> (contains detectr.Browser.get(), 'rim') or (contains detectr.Browser.get(), 'blackberry')
         result: 'blackberry'
       landscape:
         run: -> detectr.Display.width() >= detectr.Display.height()
@@ -55,19 +63,19 @@
         run: -> !runTest('landscape')
         result: 'portrait'
       'browser-chrome':
-        run: -> detectr.Browser.get().match(/Chrome/)
+        run: -> contains detectr.Browser.get(), 'chrome'
         result: 'browser-chrome'
       'browser-firefox':
-        run: -> detectr.Browser.get().match(/Firefox/)
+        run: -> contains detectr.Browser.get(), 'firefox'
         result: 'browser-firefox'
       'browser-ie':
-        run: -> detectr.Browser.get().match(/MSIE/)
+        run: -> contains detectr.Browser.get(), 'msie'
         result: 'browser-ie'
       'browser-safari':
-        run: -> detectr.Browser.get().match(/Safari/) and not detectr.Browser.get().match(/Chrome/)
+        run: -> contains detectr.Browser.get(), 'safari' and not contains detectr.Browser.get(), 'chrome'
         result: 'browser-safari'
       'browser-opera':
-        run: -> detectr.Browser.get().match(/Opera/)
+        run: -> contains detectr.Browser.get(), 'opera'
         result: 'browser-opera'
     
   
@@ -81,29 +89,27 @@
   runTest = (testName, testObject) ->
     return undefined unless testName
 
-    # Return cached result if available
-    return detectCache[testName] if detectCache[testName]
+    if testObject
+      if testObject.run
+        testResultBool = !!testObject.run()
+        testResultString = testObject.result
 
-    # Cached result not available, quit if there is no defined test
-    return undefined unless testObject
+      console.log "Testing #{testName}: Result: #{testResultBool}" if globalOptions?.debug?
 
-    if testObject.run
-      testResultBool = !!testObject.run() if testObject.run
-      testResultString = testObject.result
+      detectCache[testName] = testResultBool
 
-    console.log "Testing #{testName}: Result: #{testResultBool}" if globalOptions?.debug?
+      if testResultBool
+        htmlClassName = document.documentElement.className
 
-    detectCache[testName] = testResultBool
+        htmlClassName += " " + testResultString
+        # Trim className just in case
+        htmlClassName = htmlClassName.trim()
+        document.documentElement.className = htmlClassName
 
-    if testResultBool
-      htmlClassName = document.documentElement.className
+        detectResultCache[testName] = testResultString 
 
-      htmlClassName += " " + testResultString
-      # Trim className just in case
-      htmlClassName = htmlClassName.trim()
-      document.documentElement.className = htmlClassName
+    detectCache[testName]
 
-      detectResultCache[testName] = testResultString 
 
   ###
     detectr constructor
@@ -114,15 +120,20 @@
 
     globalOptions = options
 
-    parsedPlatform = navigator.userAgent.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/)
+    uaString = navigator.userAgent.toLowerCase()
+    uaAppName = navigator.appName
+    uaAppVersion = navigator.appVersion
+    uaPlatform = navigator.platform
+
+    parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/)
 
     detectr.Browser or= 
-      get: -> navigator.userAgent
-      name: -> navigator.appName
-      version: -> navigator.appVersion
+      get: -> uaString
+      name: -> uaAppName
+      version: -> uaAppVersion
       platform: 
         name: -> parsedPlatform[4].replace(/\s/gi, '').toLowerCase()
-        original: -> navigator.platform
+        original: -> uaPlatform
       language: ->
         language = navigator.language or navigator.systemLanguage
         language.split('-')[0] if language?

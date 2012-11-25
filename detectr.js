@@ -4,10 +4,21 @@
   "use strict";
 
   /*
+      String helper functions
+  */
+
+  var contains, defaultTests, detectCache, detectResultCache, detectr, globalOptions, runTest;
+  contains = function(bigString, smallString) {
+    if (String.prototype.contains) {
+      return bigString.contains(smallString);
+    } else {
+      return !!~bigString.indexOf(smallString);
+    }
+  };
+  /*
       Default configuration for detectr
   */
 
-  var defaultTests, detectCache, detectResultCache, detectr, globalOptions, runTest;
   defaultTests = {
     tests: {
       desktop: {
@@ -24,25 +35,25 @@
       },
       macosx: {
         run: function() {
-          return ~detectr.Browser.platform.name().indexOf('macosx');
+          return contains(detectr.Browser.platform.name(), 'macosx');
         },
         result: 'macosx'
       },
       linux: {
         run: function() {
-          return ~detectr.Browser.platform.name().indexOf('linux');
+          return contains(detectr.Browser.platform.name(), 'linux');
         },
         result: 'linux'
       },
       windows: {
         run: function() {
-          return ~detectr.Browser.platform.name().indexOf('windows');
+          return contains(detectr.Browser.platform.name(), 'windows');
         },
         result: 'windows'
       },
       android: {
         run: function() {
-          return detectr.Browser.get().match(/Android/);
+          return contains(detectr.Browser.get(), 'android');
         },
         result: 'android'
       },
@@ -54,43 +65,43 @@
       },
       ipod: {
         run: function() {
-          return detectr.Browser.get().match(/iPod/);
+          return contains(detectr.Browser.get(), 'ipod');
         },
         result: 'ipod'
       },
       iphone: {
         run: function() {
-          return detectr.Browser.get().match(/iPhone/);
+          return contains(detectr.Browser.get(), 'iphone');
         },
         result: 'iphone'
       },
       ipad: {
         run: function() {
-          return detectr.Browser.get().match(/iPad/);
+          return contains(detectr.Browser.get(), 'ipad');
         },
         result: 'ipad'
       },
       bada: {
         run: function() {
-          return detectr.Browser.get().match(/Bada/);
+          return contains(detectr.Browser.get(), 'bada');
         },
         result: 'bada'
       },
       webos: {
         run: function() {
-          return detectr.Browser.get().match(/webOS/);
+          return contains(detectr.Browser.get(), 'webos');
         },
         result: 'webos'
       },
       wp7: {
         run: function() {
-          return detectr.Browser.get().match(/Windows Phone OS/);
+          return contains(detectr.Browser.get(), 'windows phone os');
         },
         result: 'wp7'
       },
       blackberry: {
         run: function() {
-          return detectr.Browser.get().match(/RIM/) || detectr.Browser.get().match(/BlackBerry/);
+          return (contains(detectr.Browser.get(), 'rim')) || (contains(detectr.Browser.get(), 'blackberry'));
         },
         result: 'blackberry'
       },
@@ -108,31 +119,31 @@
       },
       'browser-chrome': {
         run: function() {
-          return detectr.Browser.get().match(/Chrome/);
+          return contains(detectr.Browser.get(), 'chrome');
         },
         result: 'browser-chrome'
       },
       'browser-firefox': {
         run: function() {
-          return detectr.Browser.get().match(/Firefox/);
+          return contains(detectr.Browser.get(), 'firefox');
         },
         result: 'browser-firefox'
       },
       'browser-ie': {
         run: function() {
-          return detectr.Browser.get().match(/MSIE/);
+          return contains(detectr.Browser.get(), 'msie');
         },
         result: 'browser-ie'
       },
       'browser-safari': {
         run: function() {
-          return detectr.Browser.get().match(/Safari/) && !detectr.Browser.get().match(/Chrome/);
+          return contains(detectr.Browser.get(), 'safari' && !contains(detectr.Browser.get(), 'chrome'));
         },
         result: 'browser-safari'
       },
       'browser-opera': {
         run: function() {
-          return detectr.Browser.get().match(/Opera/);
+          return contains(detectr.Browser.get(), 'opera');
         },
         result: 'browser-opera'
       }
@@ -150,57 +161,56 @@
     if (!testName) {
       return void 0;
     }
-    if (detectCache[testName]) {
-      return detectCache[testName];
-    }
-    if (!testObject) {
-      return void 0;
-    }
-    if (testObject.run) {
+    if (testObject) {
       if (testObject.run) {
         testResultBool = !!testObject.run();
+        testResultString = testObject.result;
       }
-      testResultString = testObject.result;
+      if ((globalOptions != null ? globalOptions.debug : void 0) != null) {
+        console.log("Testing " + testName + ": Result: " + testResultBool);
+      }
+      detectCache[testName] = testResultBool;
+      if (testResultBool) {
+        htmlClassName = document.documentElement.className;
+        htmlClassName += " " + testResultString;
+        htmlClassName = htmlClassName.trim();
+        document.documentElement.className = htmlClassName;
+        detectResultCache[testName] = testResultString;
+      }
     }
-    if ((globalOptions != null ? globalOptions.debug : void 0) != null) {
-      console.log("Testing " + testName + ": Result: " + testResultBool);
-    }
-    detectCache[testName] = testResultBool;
-    if (testResultBool) {
-      htmlClassName = document.documentElement.className;
-      htmlClassName += " " + testResultString;
-      htmlClassName = htmlClassName.trim();
-      document.documentElement.className = htmlClassName;
-      return detectResultCache[testName] = testResultString;
-    }
+    return detectCache[testName];
   };
   /*
       detectr constructor
   */
 
   detectr = function(config, options) {
-    var key, parsedPlatform, value, _ref;
+    var key, parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString, value, _ref;
     if (!(config && config.tests)) {
       return void 0;
     }
     globalOptions = options;
-    parsedPlatform = navigator.userAgent.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/);
+    uaString = navigator.userAgent.toLowerCase();
+    uaAppName = navigator.appName;
+    uaAppVersion = navigator.appVersion;
+    uaPlatform = navigator.platform;
+    parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/);
     detectr.Browser || (detectr.Browser = {
       get: function() {
-        return navigator.userAgent;
+        return uaString;
       },
       name: function() {
-        return navigator.appName;
+        return uaAppName;
       },
       version: function() {
-        return navigator.appVersion;
+        return uaAppVersion;
       },
       platform: {
         name: function() {
           return parsedPlatform[4].replace(/\s/gi, '').toLowerCase();
         },
         original: function() {
-          return navigator.platform;
+          return uaPlatform;
         }
       },
       language: function() {
@@ -211,6 +221,7 @@
         }
       }
     });
+    document.documentElement.setAttribute('lang', detectr.Browser.language());
     detectr.Display || (detectr.Display = {
       width: function() {
         return window.innerWidth;
