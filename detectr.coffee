@@ -10,7 +10,7 @@
         run: -> not runTest('mobile')
         result: 'desktop'
       mobile:
-        run: -> runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7')
+        run: -> runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7') or runTest('blackberry')
         result: 'mobile'
       macosx:
         run: -> ~detectr.Browser.platform.name().indexOf('macosx')
@@ -45,11 +45,14 @@
       wp7:
         run: -> detectr.Browser.get().match(/Windows Phone OS/)
         result: 'wp7'
+      blackberry:
+        run: -> detectr.Browser.get().match(/RIM/)
+        result: 'blackberry'
       landscape:
         run: -> detectr.Display.width() >= detectr.Display.height()
         result: 'landscape'
       portrait:
-        run: -> detectr.Display.height() > detectr.Display.width()
+        run: -> !runTest('landscape')
         result: 'portrait'
       'browser-chrome':
         run: -> detectr.Browser.get().match(/Chrome/)
@@ -76,10 +79,13 @@
     Runs a defined test
   ###
   runTest = (testName, testObject) ->
-    return undefined unless testName and testObject
+    return undefined unless testName
 
     # Return cached result if available
-    return !!detectCache[testName] if detectCache[testName]
+    return detectCache[testName] if detectCache[testName]
+
+    # Cached result not available, quit if there is no defined test
+    return undefined unless testObject
 
     if testObject.run
       testResultBool = !!testObject.run() if testObject.run

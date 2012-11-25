@@ -18,7 +18,7 @@
       },
       mobile: {
         run: function() {
-          return runTest('android') || runTest('ios') || runTest('bada') || runTest('webos') || runTest('wp7');
+          return runTest('android') || runTest('ios') || runTest('bada') || runTest('webos') || runTest('wp7') || runTest('blackberry');
         },
         result: 'mobile'
       },
@@ -88,6 +88,12 @@
         },
         result: 'wp7'
       },
+      blackberry: {
+        run: function() {
+          return detectr.Browser.get().match(/RIM/);
+        },
+        result: 'blackberry'
+      },
       landscape: {
         run: function() {
           return detectr.Display.width() >= detectr.Display.height();
@@ -96,7 +102,7 @@
       },
       portrait: {
         run: function() {
-          return detectr.Display.height() > detectr.Display.width();
+          return !runTest('landscape');
         },
         result: 'portrait'
       },
@@ -141,11 +147,14 @@
 
   runTest = function(testName, testObject) {
     var htmlClassName, testResultBool, testResultString;
-    if (!(testName && testObject)) {
+    if (!testName) {
       return void 0;
     }
     if (detectCache[testName]) {
-      return !!detectCache[testName];
+      return detectCache[testName];
+    }
+    if (!testObject) {
+      return void 0;
     }
     if (testObject.run) {
       if (testObject.run) {
