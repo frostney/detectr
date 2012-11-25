@@ -107,7 +107,7 @@
       },
       landscape: {
         run: function() {
-          return detectr.Display.width() >= detectr.Display.height();
+          return detectr.Display.pageWidth() >= detectr.Display.pageHeight();
         },
         result: 'landscape'
       },
@@ -196,6 +196,12 @@
     uaPlatform = navigator.platform;
     parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/);
     detectr.Browser || (detectr.Browser = {
+      width: function() {
+        return window.outerWidth;
+      },
+      height: function() {
+        return window.outerHeight;
+      },
       get: function() {
         return uaString;
       },
@@ -224,9 +230,15 @@
     document.documentElement.setAttribute('lang', detectr.Browser.language());
     detectr.Display || (detectr.Display = {
       width: function() {
-        return window.innerWidth;
+        return window.screen.width;
       },
       height: function() {
+        return window.screen.height;
+      },
+      pageWidth: function() {
+        return window.innerWidth;
+      },
+      pageHeight: function() {
         return window.innerHeight;
       }
     });

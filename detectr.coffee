@@ -57,7 +57,7 @@
         run: -> (contains detectr.Browser.get(), 'rim') or (contains detectr.Browser.get(), 'blackberry')
         result: 'blackberry'
       landscape:
-        run: -> detectr.Display.width() >= detectr.Display.height()
+        run: -> detectr.Display.pageWidth() >= detectr.Display.pageHeight()
         result: 'landscape'
       portrait:
         run: -> !runTest('landscape')
@@ -128,6 +128,8 @@
     parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/)
 
     detectr.Browser or= 
+      width: -> window.outerWidth
+      height: -> window.outerHeight
       get: -> uaString
       name: -> uaAppName
       version: -> uaAppVersion
@@ -142,8 +144,10 @@
     document.documentElement.setAttribute('lang', detectr.Browser.language())
 
     detectr.Display or=
-      width: -> window.innerWidth
-      height: -> window.innerHeight
+      width: -> window.screen.width
+      height: -> window.screen.height
+      pageWidth: -> window.innerWidth
+      pageHeight: -> window.innerHeight
 
     detectr.clear()
 
