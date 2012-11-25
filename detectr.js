@@ -137,7 +137,7 @@
       },
       'browser-safari': {
         run: function() {
-          return contains(detectr.Browser.get(), 'safari' && !contains(detectr.Browser.get(), 'chrome'));
+          return (contains(detectr.Browser.get(), 'safari')) && !(contains(detectr.Browser.get(), 'chrome'));
         },
         result: 'browser-safari'
       },

@@ -72,7 +72,7 @@
         run: -> contains detectr.Browser.get(), 'msie'
         result: 'browser-ie'
       'browser-safari':
-        run: -> contains detectr.Browser.get(), 'safari' and not contains detectr.Browser.get(), 'chrome'
+        run: -> (contains detectr.Browser.get(), 'safari') and not (contains detectr.Browser.get(), 'chrome')
         result: 'browser-safari'
       'browser-opera':
         run: -> contains detectr.Browser.get(), 'opera'
