@@ -177,7 +177,7 @@
 
     value = value.replace(/\s/gi, '').toLowerCase()
 
-    result = detectCache[value] if detectCache[value]
+    !!detectCache[value]
 
   ###
     Checks for a test and returns the result value of the test
@@ -187,7 +187,7 @@
 
     value = value.replace(/\s/gi, '').toLowerCase()
 
-    result = detectResultCache[value] if detectResultCache[value]
+    detectResultCache[value] if detectResultCache[value]
 
   ###
     Clear cache
@@ -230,8 +230,6 @@
           status: 'untested'
           run: value.run
           result: value.result
-
-      console.log testQueue
 
       # Run the tests
       for key, value of testName.tests

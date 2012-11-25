@@ -265,27 +265,23 @@
   */
 
   detectr.is = function(value) {
-    var result;
     if (!value) {
       return void 0;
     }
     value = value.replace(/\s/gi, '').toLowerCase();
-    if (detectCache[value]) {
-      return result = detectCache[value];
-    }
+    return !!detectCache[value];
   };
   /*
       Checks for a test and returns the result value of the test
   */
 
   detectr.result = function(value) {
-    var result;
     if (!value) {
       return void 0;
     }
     value = value.replace(/\s/gi, '').toLowerCase();
     if (detectResultCache[value]) {
-      return result = detectResultCache[value];
+      return detectResultCache[value];
     }
   };
   /*
@@ -338,7 +334,6 @@
           result: value.result
         };
       }
-      console.log(testQueue);
       _ref1 = testName.tests;
       for (key in _ref1) {
         value = _ref1[key];
