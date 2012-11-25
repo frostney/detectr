@@ -74,7 +74,7 @@
       },
       iphone: {
         run: function() {
-          return contains(detectr.Browser.get(), 'iphone');
+          return (contains(detectr.Browser.get(), 'iphone')) && !runTest('ipod');
         },
         result: 'iphone'
       },

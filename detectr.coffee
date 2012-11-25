@@ -43,7 +43,7 @@
         run: -> contains detectr.Browser.get(), 'ipod'
         result: 'ipod'
       iphone:
-        run: -> contains detectr.Browser.get(), 'iphone'
+        run: -> (contains detectr.Browser.get(), 'iphone') and not runTest('ipod')
         result: 'iphone'
       ipad:
         run: -> contains detectr.Browser.get(), 'ipad'
