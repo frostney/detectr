@@ -7,7 +7,7 @@
       String helper functions
   */
 
-  var contains, defaultTests, detectCache, detectResultCache, detectr, globalOptions, runTest;
+  var contains, defaultTests, detectCache, detectResultCache, detectr, globalOptions, runTest, testQueue;
   contains = function(bigString, smallString) {
     if (String.prototype.contains) {
       return bigString.contains(smallString);
@@ -29,6 +29,9 @@
       },
       mobile: {
         run: function() {
+          if (contains(detectr.Browser.get(), 'mobile')) {
+            return true;
+          }
           return runTest('android') || runTest('ios') || runTest('bada') || runTest('webos') || runTest('wp7') || runTest('blackberry');
         },
         result: 'mobile'
@@ -152,6 +155,7 @@
   detectCache = {};
   detectResultCache = {};
   globalOptions = {};
+  testQueue = {};
   /*
       Runs a defined test
   */
@@ -159,33 +163,42 @@
   runTest = function(testName, testObject) {
     var htmlClassName, testResultBool, testResultString;
     if (!testName) {
-      return void 0;
+      return false;
     }
-    if (testObject) {
-      if (testObject.run) {
-        testResultBool = !!testObject.run();
-        testResultString = testObject.result;
-      }
-      if ((globalOptions != null ? globalOptions.debug : void 0) != null) {
-        console.log("Testing " + testName + ": Result: " + testResultBool);
-      }
-      detectCache[testName] = testResultBool;
-      if (testResultBool) {
-        htmlClassName = document.documentElement.className;
-        htmlClassName += " " + testResultString;
-        htmlClassName = htmlClassName.trim();
-        document.documentElement.className = htmlClassName;
-        detectResultCache[testName] = testResultString;
+    if (testQueue[testName].status === 'tested') {
+      return !!detectCache[testName];
+    } else {
+      if (testObject) {
+        if (testObject.run) {
+          testResultBool = !!testObject.run();
+          testResultString = testObject.result;
+        }
+        if ((globalOptions != null ? globalOptions.debug : void 0) != null) {
+          console.log("Testing " + testName + ": Result: " + testResultBool);
+        }
+        if (testQueue[testName]) {
+          testQueue[testName].status = 'tested';
+        }
+        detectCache[testName] = testResultBool;
+        if (testResultBool) {
+          htmlClassName = document.documentElement.className;
+          htmlClassName += " " + testResultString;
+          htmlClassName = htmlClassName.trim();
+          document.documentElement.className = htmlClassName;
+          detectResultCache[testName] = testResultString;
+          return !!detectCache[testName];
+        }
+      } else {
+        return runTest(testName, testQueue[testName]);
       }
     }
-    return !!detectCache[testName];
   };
   /*
       detectr constructor
   */
 
   detectr = function(config, options) {
-    var key, parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString, value, _ref;
+    var parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString;
     if (!(config && config.tests)) {
       return void 0;
     }
@@ -243,11 +256,7 @@
       }
     });
     detectr.clear();
-    _ref = config.tests;
-    for (key in _ref) {
-      value = _ref[key];
-      detectr.add(key, value);
-    }
+    detectr.add(config);
     detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
     return detectr;
   };
@@ -285,6 +294,7 @@
 
   detectr.clear = function() {
     var htmlClassName, key, value;
+    testQueue = {};
     detectCache = {};
     for (key in detectResultCache) {
       value = detectResultCache[key];
@@ -317,10 +327,21 @@
   */
 
   detectr.add = function(testName, testObject) {
-    var key, value;
+    var key, value, _ref, _ref1;
     if (testName.tests) {
-      for (key in testName) {
-        value = testName[key];
+      _ref = testName.tests;
+      for (key in _ref) {
+        value = _ref[key];
+        testQueue[key] = {
+          status: 'untested',
+          run: value.run,
+          result: value.result
+        };
+      }
+      console.log(testQueue);
+      _ref1 = testName.tests;
+      for (key in _ref1) {
+        value = _ref1[key];
         detectr.add(key, value);
       }
     } else {

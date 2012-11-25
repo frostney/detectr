@@ -18,7 +18,11 @@
         run: -> not runTest('mobile')
         result: 'desktop'
       mobile:
-        run: -> runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7') or runTest('blackberry')
+        run: -> 
+          # Most mobile browsers have a mobile in their user agent
+          return true if contains detectr.Browser.get(), 'mobile'
+
+          runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7') or runTest('blackberry')
         result: 'mobile'
       macosx:
         run: -> (contains detectr.Browser.platform.name(), 'macosx') and not (contains detectr.Browser.platform.name(), 'likemacosx')
@@ -82,33 +86,41 @@
   detectCache = {}
   detectResultCache = {}
   globalOptions = {}
+  testQueue = {}
 
   ###
     Runs a defined test
   ###
   runTest = (testName, testObject) ->
-    return undefined unless testName
+    return false unless testName
 
-    if testObject
-      if testObject.run
-        testResultBool = !!testObject.run()
-        testResultString = testObject.result
+    if testQueue[testName].status == 'tested'
+      return !!detectCache[testName]
+    else
+      if testObject
+        if testObject.run
+          testResultBool = !!testObject.run()
+          testResultString = testObject.result
 
-      console.log "Testing #{testName}: Result: #{testResultBool}" if globalOptions?.debug?
+        console.log "Testing #{testName}: Result: #{testResultBool}" if globalOptions?.debug?
 
-      detectCache[testName] = testResultBool
+        testQueue[testName].status = 'tested' if testQueue[testName]
 
-      if testResultBool
-        htmlClassName = document.documentElement.className
+        detectCache[testName] = testResultBool
 
-        htmlClassName += " " + testResultString
-        # Trim className just in case
-        htmlClassName = htmlClassName.trim()
-        document.documentElement.className = htmlClassName
+        if testResultBool
+          htmlClassName = document.documentElement.className
 
-        detectResultCache[testName] = testResultString 
+          htmlClassName += " " + testResultString
+          # Trim className just in case
+          htmlClassName = htmlClassName.trim()
+          document.documentElement.className = htmlClassName
 
-    !!detectCache[testName]
+          detectResultCache[testName] = testResultString
+
+          !!detectCache[testName]
+      else
+        runTest testName, testQueue[testName]
 
 
   ###
@@ -151,8 +163,7 @@
 
     detectr.clear()
 
-    for key, value of config.tests
-      detectr.add key, value
+    detectr.add config
 
     detectr.Display.orientation = detectResultCache['landscape'] or detectResultCache['portrait']
 
@@ -182,6 +193,7 @@
     Clear cache
   ###
   detectr.clear = ->
+    testQueue = {}
     detectCache = {}
     for key, value of detectResultCache
       htmlClassName = document.documentElement.className
@@ -212,7 +224,17 @@
   detectr.add = (testName, testObject) ->
     # If it is a single test, run it directly, else iterate over it
     if testName.tests
-      for key, value of testName
+      # Add all tests to the queue
+      for key, value of testName.tests
+        testQueue[key] =
+          status: 'untested'
+          run: value.run
+          result: value.result
+
+      console.log testQueue
+
+      # Run the tests
+      for key, value of testName.tests
         detectr.add key, value
     else
       runTest testName, testObject
