@@ -90,7 +90,7 @@
       },
       blackberry: {
         run: function() {
-          return detectr.Browser.get().match(/RIM/);
+          return detectr.Browser.get().match(/RIM/) || detectr.Browser.get().match(/BlackBerry/);
         },
         result: 'blackberry'
       },

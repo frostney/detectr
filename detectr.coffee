@@ -46,7 +46,7 @@
         run: -> detectr.Browser.get().match(/Windows Phone OS/)
         result: 'wp7'
       blackberry:
-        run: -> detectr.Browser.get().match(/RIM/)
+        run: -> detectr.Browser.get().match(/RIM/) or detectr.Browser.get().match(/BlackBerry/)
         result: 'blackberry'
       landscape:
         run: -> detectr.Display.width() >= detectr.Display.height()
