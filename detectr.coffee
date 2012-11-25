@@ -21,7 +21,7 @@
         run: -> runTest('android') or runTest('ios') or runTest('bada') or runTest('webos') or runTest('wp7') or runTest('blackberry')
         result: 'mobile'
       macosx:
-        run: -> contains detectr.Browser.platform.name(), 'macosx'
+        run: -> (contains detectr.Browser.platform.name(), 'macosx') and not (contains detectr.Browser.platform.name(), 'likemacosx')
         result: 'macosx'
       linux:
         run: -> contains detectr.Browser.platform.name(), 'linux'
@@ -33,7 +33,7 @@
         run: -> contains detectr.Browser.get(), 'android'
         result: 'android'
       ios:
-        run: -> runTest('ipod') or runTest('iphone') or runTest('ipad')
+        run: -> contains detectr.Browser.platform.name(), 'likemacosx'
         result: 'ios'
       ipod:
         run: -> contains detectr.Browser.get(), 'ipod'
@@ -108,7 +108,7 @@
 
         detectResultCache[testName] = testResultString 
 
-    detectCache[testName]
+    !!detectCache[testName]
 
 
   ###

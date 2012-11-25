@@ -35,7 +35,7 @@
       },
       macosx: {
         run: function() {
-          return contains(detectr.Browser.platform.name(), 'macosx');
+          return (contains(detectr.Browser.platform.name(), 'macosx')) && !(contains(detectr.Browser.platform.name(), 'likemacosx'));
         },
         result: 'macosx'
       },
@@ -59,7 +59,7 @@
       },
       ios: {
         run: function() {
-          return runTest('ipod') || runTest('iphone') || runTest('ipad');
+          return contains(detectr.Browser.platform.name(), 'likemacosx');
         },
         result: 'ios'
       },
@@ -178,7 +178,7 @@
         detectResultCache[testName] = testResultString;
       }
     }
-    return detectCache[testName];
+    return !!detectCache[testName];
   };
   /*
       detectr constructor
