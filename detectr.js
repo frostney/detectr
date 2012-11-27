@@ -198,7 +198,7 @@
   */
 
   detectr = function(config, options) {
-    var parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString;
+    var doOrientationChange, parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString;
     if (!(config && config.tests)) {
       return void 0;
     }
@@ -257,6 +257,49 @@
     });
     detectr.clear();
     detectr.add(config);
+    doOrientationChange = function(condition) {
+      var htmlClassName, newResult;
+      if (condition()) {
+        if (detectr.Display.orientation === detectResultCache['landscape']) {
+          return false;
+        }
+        newResult = detectr.defaultTests.tests['landscape'].result;
+        htmlClassName = document.documentElement.className;
+        if (contains(htmlClassName, detectResultCache['portrait'])) {
+          htmlClassName = htmlClassName.replace(detectResultCache['portrait'], newResult);
+          document.documentElement.className = htmlClassName;
+        }
+        detectCache['landscape'] = true;
+        detectCache['portrait'] = false;
+        detectResultCache['landscape'] = newResult;
+        detectResultCache['portrait'] = void 0;
+      } else {
+        if (detectr.Display.orientation === detectResultCache['portrait']) {
+          return false;
+        }
+        newResult = detectr.defaultTests.tests['portrait'].result;
+        htmlClassName = document.documentElement.className;
+        if (contains(htmlClassName, detectResultCache['landscape'])) {
+          htmlClassName = htmlClassName.replace(detectResultCache['landscape'], newResult);
+          document.documentElement.className = htmlClassName;
+        }
+        detectCache['landscape'] = true;
+        detectCache['portrait'] = false;
+        detectResultCache['landscape'] = void 0;
+        detectResultCache['portrait'] = newResult;
+      }
+      return detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
+    };
+    window.addEventListener('resize', (function() {
+      return doOrientationChange(function() {
+        return detectr.Display.pageWidth() >= detectr.Display.pageHeight();
+      });
+    }), false);
+    window.addEventListener('orientationchange', (function() {
+      return doOrientationChange(function() {
+        return Math.abs(window.orientation) === 90;
+      });
+    }), false);
     detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
     return detectr;
   };
