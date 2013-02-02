@@ -1,4 +1,4 @@
-((window, document) ->
+do (window = @, document) ->
   "use strict"
 
   ###
@@ -291,5 +291,3 @@
     and set the reference to the detectr object
   ###
   window.detectr = detectr defaultTests
-
-)(@, document)
