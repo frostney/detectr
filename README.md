@@ -21,11 +21,15 @@ This is espacially useful if you need to reduce some CSS3 visual effects for mob
 __Usage in JavaScript:__  
 If you need to use detectr in your JavaScript code, you can do this:
 
-	detectr.is('mobile')
+```javascript
+detectr.is('mobile')
+```
 
 This will either return true or false depending on the platform. If you want to return the string that has been written to the html element as a class, you can do the following:
 
-	detectr.result('mobile')
+```javascript
+detectr.result('mobile')
+```
 
 If the platform is not mobile, it returns `undefined`.
 
@@ -35,12 +39,12 @@ Adding your own tests
 Let's add our own test to see the browser window is widescreen or not. Each test is described as an object:
 
 ```javascript
-	var testDescription = {
-		run: function() {
-			return ((detectr.Display.width() / detectr.Display().height) > (4 / 3));
-		},
-		result: 'widescreen'
-	}
+var testDescription = {
+	run: function() {
+		return ((detectr.Display.width() / detectr.Display().height) > (4 / 3));
+	},
+	result: 'widescreen'
+}
 ```
 
 The `run` property of an object will be executed once the test has been registered and it has to be a function. The return value should be a boolean, but if it's not it will be converted into one. The `result` property should be a string and will be added to the class attribute of the html element if the test has been successfully completed.
@@ -48,21 +52,21 @@ The `run` property of an object will be executed once the test has been register
 The equivalent CoffeeScript will do the same:
 
 ```coffeescript
-	testDescription =
-		run: -> ((detectr.Display.width() / detectr.Display().height) > (4 / 3))
-		result: 'widescreen'
+testDescription =
+	run: -> ((detectr.Display.width() / detectr.Display().height) > (4 / 3))
+	result: 'widescreen'
 ```
 
 Either way, you can add the test like this:
 
 ```javascript
-	detectr.add('widescreen', testDescription)
+detectr.add('widescreen', testDescription)
 ```
 
 If you want to remove a test, use this line of code:
 
 ```javascript
-	detectr.remove('widescreen')
+detectr.remove('widescreen')
 ```
 
 If a test was removed and it has been successful previously, the class attribute of the `html` attribute will be altered as well.
