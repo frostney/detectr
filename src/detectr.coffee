@@ -155,7 +155,7 @@ do (window = @, document) ->
         language.split('-')[0] if language?
 
     # Sets language attribute to browser language by default
-    document.documentElement.setAttribute('lang', detectr.Browser.language())
+    document.documentElement.setAttribute 'lang', detectr.Browser.language()
 
     detectr.Display or=
       width: -> window.screen.width
@@ -284,7 +284,7 @@ do (window = @, document) ->
     detectr
 
   ###
-    Expose defaultTests for those who need re-execute the detectr function
+    Expose defaultTests for those who need to re-execute the detectr function
   ###
   detectr.defaultTests = defaultTests
 
