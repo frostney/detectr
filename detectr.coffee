@@ -94,7 +94,7 @@ do (window = @, document) ->
   runTest = (testName, testObject) ->
     return false unless testName
 
-    if testQueue[testName].status == 'tested'
+    if testQueue[testName].status is 'tested'
       return !!detectCache[testName]
     else
       if testObject
@@ -111,7 +111,7 @@ do (window = @, document) ->
         if testResultBool
           htmlClassName = document.documentElement.className
 
-          htmlClassName += " " + testResultString
+          htmlClassName += " #{testResultString}"
           # Trim className just in case
           htmlClassName = htmlClassName.trim()
           document.documentElement.className = htmlClassName
@@ -133,9 +133,7 @@ do (window = @, document) ->
     globalOptions = options
 
     uaString = navigator.userAgent.toLowerCase()
-    uaAppName = navigator.appName
-    uaAppVersion = navigator.appVersion
-    uaPlatform = navigator.platform
+    {appName: uaAppName, appVersion: uaAppVersion, platform: uaPlatform} = navigator
 
     parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/)
 
