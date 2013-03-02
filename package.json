@@ -1,0 +1,13 @@
+{
+  "name": "detectr",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "flour": "*",
+    "uglify-js": "*",
+    "coffee-script": "*",
+    "jshint": "*",
+    "mocha": "*",
+    "chai": "*"
+  }
+}
