@@ -6,6 +6,7 @@
     "flour": "*",
     "uglify-js": "*",
     "coffee-script": "*",
+    "codo": "*",
     "jshint": "*",
     "mocha": "*",
     "chai": "*"
