@@ -11,6 +11,8 @@ do (window = @, document) ->
 
   ###
     Default configuration for detectr
+    
+    @mixin Default tests
   ###
   defaultTests =
     tests:
@@ -125,6 +127,8 @@ do (window = @, document) ->
 
   ###
     detectr constructor
+    
+    @method detectr
   ###
   detectr = (config, options) ->
     # Make sure the config object exists and it has some tests in it
