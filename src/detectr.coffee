@@ -132,7 +132,7 @@ do (window = @, document) ->
   ###
   detectr = (config, options) ->
     # Make sure the config object exists and it has some tests in it
-    return undefined unless (config and config.tests)
+    return undefined unless config and config.tests
 
     globalOptions = options
 
@@ -169,7 +169,7 @@ do (window = @, document) ->
 
     doOrientationChange = (condition) ->
       if condition()
-        return false if detectr.Display.orientation == detectResultCache['landscape']
+        return false if detectr.Display.orientation is detectResultCache['landscape']
 
         newResult = detectr.defaultTests.tests['landscape'].result
 
@@ -186,14 +186,14 @@ do (window = @, document) ->
         detectResultCache['portrait'] = undefined
 
       else
-        return false if detectr.Display.orientation == detectResultCache['portrait']
+        return false if detectr.Display.orientation is detectResultCache['portrait']
 
         newResult = detectr.defaultTests.tests['portrait'].result
 
         htmlClassName = document.documentElement.className
 
         if contains htmlClassName, detectResultCache['landscape']
-          htmlClassName = htmlClassName.replace(detectResultCache['landscape'], newResult)
+          htmlClassName = htmlClassName.replace detectResultCache['landscape'], newResult
           document.documentElement.className = htmlClassName
 
         detectCache['landscape'] = true
@@ -207,7 +207,7 @@ do (window = @, document) ->
 
     window.addEventListener 'resize', (-> doOrientationChange(-> detectr.Display.pageWidth() >= detectr.Display.pageHeight())), false
 
-    window.addEventListener 'orientationchange', (-> doOrientationChange(-> Math.abs(window.orientation) == 90)), false
+    window.addEventListener 'orientationchange', (-> doOrientationChange(-> Math.abs(window.orientation) is 90)), false
 
     detectr.Display.orientation = detectResultCache['landscape'] or detectResultCache['portrait']
 
