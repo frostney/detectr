@@ -1,12 +1,12 @@
 (function() {
-
-  (function(window, document) {
-    "use strict";
+  "use strict";
+  (function(root) {
+    var contains, defaultTests, detectCache, detectResultCache, detectr, document, globalOptions, runTest, testQueue;
+    document = root.document;
     /*
       String helper functions
     */
 
-    var contains, defaultTests, detectCache, detectResultCache, detectr, globalOptions, runTest, testQueue;
     contains = function(bigString, smallString) {
       if (String.prototype.contains) {
         return bigString.contains(smallString);
@@ -49,11 +49,11 @@
           },
           result: 'linux'
         },
-        windows: {
+        roots: {
           run: function() {
-            return contains(detectr.Browser.platform.name(), 'windows');
+            return contains(detectr.Browser.platform.name(), 'roots');
           },
-          result: 'windows'
+          result: 'roots'
         },
         android: {
           run: function() {
@@ -99,7 +99,7 @@
         },
         wp7: {
           run: function() {
-            return contains(detectr.Browser.get(), 'windows phone os');
+            return contains(detectr.Browser.get(), 'roots phone os');
           },
           result: 'wp7'
         },
@@ -211,10 +211,10 @@
       parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/);
       detectr.Browser || (detectr.Browser = {
         width: function() {
-          return window.outerWidth;
+          return root.outerWidth;
         },
         height: function() {
-          return window.outerHeight;
+          return root.outerHeight;
         },
         get: function() {
           return uaString;
@@ -244,16 +244,16 @@
       document.documentElement.setAttribute('lang', detectr.Browser.language());
       detectr.Display || (detectr.Display = {
         width: function() {
-          return window.screen.width;
+          return root.screen.width;
         },
         height: function() {
-          return window.screen.height;
+          return root.screen.height;
         },
         pageWidth: function() {
-          return window.innerWidth;
+          return root.innerWidth;
         },
         pageHeight: function() {
-          return window.innerHeight;
+          return root.innerHeight;
         }
       });
       detectr.clear();
@@ -291,14 +291,14 @@
         }
         return detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
       };
-      window.addEventListener('resize', (function() {
+      root.addEventListener('resize', (function() {
         return doOrientationChange(function() {
           return detectr.Display.pageWidth() >= detectr.Display.pageHeight();
         });
       }), false);
-      window.addEventListener('orientationchange', (function() {
+      root.addEventListener('orientationchange', (function() {
         return doOrientationChange(function() {
-          return Math.abs(window.orientation) === 90;
+          return Math.abs(root.orientation) === 90;
         });
       }), false);
       detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
@@ -389,7 +389,7 @@
       return detectr;
     };
     /*
-      Expose defaultTests for those who need re-execute the detectr function
+      Expose defaultTests for those who need to re-execute the detectr function
     */
 
     detectr.defaultTests = defaultTests;
@@ -398,7 +398,12 @@
       and set the reference to the detectr object
     */
 
-    return window.detectr = detectr(defaultTests);
-  })(this, document);
+    root.detectr = detectr(defaultTests);
+    if (root.define && (typeof exports === "undefined" || exports === null)) {
+      return root.define('detectr', [], function() {
+        return root.detectr;
+      });
+    }
+  })(typeof exports !== "undefined" && exports !== null ? exports : this);
 
 }).call(this);
