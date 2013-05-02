@@ -1,5 +1,7 @@
-do (window = @, document) ->
-  "use strict"
+"use strict"
+
+do (root = exports ? this) ->
+  document = root.document
 
   ###
     String helper functions
@@ -32,9 +34,9 @@ do (window = @, document) ->
       linux:
         run: -> contains detectr.Browser.platform.name(), 'linux'
         result: 'linux'
-      windows:
-        run: -> contains detectr.Browser.platform.name(), 'windows'
-        result: 'windows'
+      roots:
+        run: -> contains detectr.Browser.platform.name(), 'roots'
+        result: 'roots'
       android:
         run: -> contains detectr.Browser.get(), 'android'
         result: 'android'
@@ -57,7 +59,7 @@ do (window = @, document) ->
         run: -> contains detectr.Browser.get(), 'webos'
         result: 'webos'
       wp7:
-        run: -> contains detectr.Browser.get(), 'windows phone os'
+        run: -> contains detectr.Browser.get(), 'roots phone os'
         result: 'wp7'
       blackberry:
         run: -> (contains detectr.Browser.get(), 'rim') or (contains detectr.Browser.get(), 'blackberry')
@@ -142,8 +144,8 @@ do (window = @, document) ->
     parsedPlatform = uaString.match(/(.*?)\s(.*?)\((.*?);\s(.*?)\)/)
 
     detectr.Browser or= 
-      width: -> window.outerWidth
-      height: -> window.outerHeight
+      width: -> root.outerWidth
+      height: -> root.outerHeight
       get: -> uaString
       name: -> uaAppName
       version: -> uaAppVersion
@@ -158,10 +160,10 @@ do (window = @, document) ->
     document.documentElement.setAttribute 'lang', detectr.Browser.language()
 
     detectr.Display or=
-      width: -> window.screen.width
-      height: -> window.screen.height
-      pageWidth: -> window.innerWidth
-      pageHeight: -> window.innerHeight
+      width: -> root.screen.width
+      height: -> root.screen.height
+      pageWidth: -> root.innerWidth
+      pageHeight: -> root.innerHeight
 
     detectr.clear()
 
@@ -205,9 +207,9 @@ do (window = @, document) ->
 
       detectr.Display.orientation = detectResultCache['landscape'] or detectResultCache['portrait']
 
-    window.addEventListener 'resize', (-> doOrientationChange(-> detectr.Display.pageWidth() >= detectr.Display.pageHeight())), false
+    root.addEventListener 'resize', (-> doOrientationChange(-> detectr.Display.pageWidth() >= detectr.Display.pageHeight())), false
 
-    window.addEventListener 'orientationchange', (-> doOrientationChange(-> Math.abs(window.orientation) is 90)), false
+    root.addEventListener 'orientationchange', (-> doOrientationChange(-> Math.abs(root.orientation) is 90)), false
 
     detectr.Display.orientation = detectResultCache['landscape'] or detectResultCache['portrait']
 
@@ -292,4 +294,8 @@ do (window = @, document) ->
     Call detectr constructor with default configuration
     and set the reference to the detectr object
   ###
-  window.detectr = detectr defaultTests
+  root.detectr = detectr defaultTests
+  
+  # AMDs are awesome :)
+  if root.define and not exports?
+    root.define 'detectr', [], -> root.detectr
