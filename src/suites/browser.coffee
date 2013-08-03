@@ -1,19 +1,27 @@
 do (detectr = @detectr) ->
   
-  
-  detectr.defineSuite 'browser',
-    'browser-chrome':
+  detectr.suite.add 'browser', ->
+    # Use ECMAScript 6 String.prototype.contains if available
+    contains = (bigString, smallString) ->
+      if String::contains
+        bigString.contains(smallString)
+      else 
+        !!~bigString.indexOf(smallString)
+    
+    @run 'browser-chrome',
       run: -> contains detectr.Browser.get(), 'chrome'
       result: 'browser-chrome'
-    'browser-firefox':
+    @run 'browser-firefox',
       run: -> contains detectr.Browser.get(), 'firefox'
       result: 'browser-firefox'
-    'browser-ie':
+    @run 'browser-ie',
       run: -> contains detectr.Browser.get(), 'msie'
       result: 'browser-ie'
-    'browser-safari':
+    @run 'browser-safari',
       run: -> (contains detectr.Browser.get(), 'safari') and not (contains detectr.Browser.get(), 'chrome')
       result: 'browser-safari'
-    'browser-opera':
+    @run 'browser-opera',
       run: -> contains detectr.Browser.get(), 'opera'
       result: 'browser-opera'
+      
+  detectr.suite.run 'browser'
