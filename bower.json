@@ -1,0 +1,15 @@
+{
+  "name": "detectr",
+  "version": "0.2.0",
+  "main": "dist/detectr.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "examples",
+    "doc",
+    "src"
+  ]
+}
