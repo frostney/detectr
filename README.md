@@ -1,5 +1,5 @@
-detectr.js
-==========
+detectr
+=======
 
 detectr is a small library written in CoffeeScript and usable in any JavaScript browser environment which detects the current platform, display size and orientation among other things.
 
