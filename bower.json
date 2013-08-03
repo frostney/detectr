@@ -1,6 +1,6 @@
 {
   "name": "detectr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/detectr.js",
   "ignore": [
     "**/.*",
@@ -10,6 +10,7 @@
     "tests",
     "examples",
     "doc",
-    "src"
+    "src",
+    "Gruntfile.coffee"
   ]
 }
