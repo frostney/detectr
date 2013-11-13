@@ -15,6 +15,10 @@ detectr does not depend on any third-party libaries, just plain old JavaScr...er
 How to use
 ----------
 
+Using bower:
+`bower install detectr`
+
+
 Include __detectr.js__ in your application. Your root element (html) will now have additional like "mobile", "browser-chrome" etc.  
 This is espacially useful if you need to reduce some CSS3 visual effects for mobile devices or in specific browsers.  
 
