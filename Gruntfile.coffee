@@ -6,8 +6,6 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
     coffee:
-      options:
-        bare: true
       files:
         src: ['src/*.coffee']
         dest: 'dist/<%= pkg.name %>.js'
