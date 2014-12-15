@@ -198,8 +198,8 @@ do (root = exports ? this) ->
           htmlClassName = htmlClassName.replace detectResultCache['landscape'], newResult
           document.documentElement.className = htmlClassName
 
-        detectCache['landscape'] = true
-        detectCache['portrait'] = false
+        detectCache['landscape'] = false
+        detectCache['portrait'] = true
 
         detectResultCache['landscape'] = undefined
         detectResultCache['portrait'] = newResult
