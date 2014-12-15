@@ -157,7 +157,8 @@ do (root = exports ? this) ->
         language.split('-')[0] if language?
 
     # Sets language attribute to browser language by default
-    document.documentElement.setAttribute 'lang', detectr.Browser.language()
+    unless document.documentElement.getAttribute 'lang'
+      document.documentElement.setAttribute 'lang', detectr.Browser.language()
 
     detectr.Display or=
       width: -> root.screen.width
