@@ -3,10 +3,10 @@
   (function(root) {
     var contains, defaultTests, detectCache, detectResultCache, detectr, document, globalOptions, runTest, testQueue;
     document = root.document;
+
     /*
       String helper functions
-    */
-
+     */
     contains = function(bigString, smallString) {
       if (String.prototype.contains) {
         return bigString.contains(smallString);
@@ -14,12 +14,12 @@
         return !!~bigString.indexOf(smallString);
       }
     };
+
     /*
       Default configuration for detectr
       
       @mixin Default tests
-    */
-
+     */
     defaultTests = {
       tests: {
         desktop: {
@@ -157,10 +157,10 @@
     detectResultCache = {};
     globalOptions = {};
     testQueue = {};
+
     /*
       Runs a defined test
-    */
-
+     */
     runTest = function(testName, testObject) {
       var htmlClassName, testResultBool, testResultString;
       if (!testName) {
@@ -194,12 +194,12 @@
         }
       }
     };
+
     /*
       detectr constructor
       
       @method detectr
-    */
-
+     */
     detectr = function(config, options) {
       var doOrientationChange, parsedPlatform, uaAppName, uaAppVersion, uaPlatform, uaString;
       if (!(config && config.tests)) {
@@ -306,10 +306,10 @@
       detectr.Display.orientation = detectResultCache['landscape'] || detectResultCache['portrait'];
       return detectr;
     };
+
     /*
       Checks for a test and returns a boolean value
-    */
-
+     */
     detectr.is = function(value) {
       if (!value) {
         return void 0;
@@ -317,10 +317,10 @@
       value = value.replace(/\s/gi, '').toLowerCase();
       return !!detectCache[value];
     };
+
     /*
       Checks for a test and returns the result value of the test
-    */
-
+     */
     detectr.result = function(value) {
       if (!value) {
         return void 0;
@@ -330,10 +330,10 @@
         return detectResultCache[value];
       }
     };
+
     /*
       Clear cache
-    */
-
+     */
     detectr.clear = function() {
       var htmlClassName, key, value;
       testQueue = {};
@@ -347,10 +347,10 @@
       detectResultCache = {};
       return detectr;
     };
+
     /*
       Remove a test
-    */
-
+     */
     detectr.remove = function(testName) {
       var htmlClassName;
       if (detectCache[testName]) {
@@ -364,25 +364,25 @@
       }
       return detectr;
     };
+
     /*
       Add a test
-    */
-
+     */
     detectr.add = function(testName, testObject) {
-      var key, value, _ref, _ref1;
+      var key, ref, ref1, value;
       if (testName.tests) {
-        _ref = testName.tests;
-        for (key in _ref) {
-          value = _ref[key];
+        ref = testName.tests;
+        for (key in ref) {
+          value = ref[key];
           testQueue[key] = {
             status: 'untested',
             run: value.run,
             result: value.result
           };
         }
-        _ref1 = testName.tests;
-        for (key in _ref1) {
-          value = _ref1[key];
+        ref1 = testName.tests;
+        for (key in ref1) {
+          value = ref1[key];
           detectr.add(key, value);
         }
       } else {
@@ -390,16 +390,16 @@
       }
       return detectr;
     };
+
     /*
       Expose defaultTests for those who need to re-execute the detectr function
-    */
-
+     */
     detectr.defaultTests = defaultTests;
+
     /*
       Call detectr constructor with default configuration
       and set the reference to the detectr object
-    */
-
+     */
     root.detectr = detectr(defaultTests);
     if (root.define && (typeof exports === "undefined" || exports === null)) {
       return root.define('detectr', [], function() {
